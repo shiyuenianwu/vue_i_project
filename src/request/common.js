@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-03-18 11:33:49
- * @LastEditTime: 2020-03-18 12:31:55
+ * @LastEditTime: 2020-04-16 23:14:41
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \test_dev\vue_i_project\src\request\common.js
@@ -11,7 +11,7 @@ import axios from 'axios'
 axios.defaults.withCredentials=true //表示每次请求都把cookie带上
 
 //设置后端域名
-const backendHost = "http://127.0.0.1:8000/";
+const backendHost = "http://localhost/api/";
 
 export const postRequest = function(path, data={} ){
     return axios.post(backendHost + path, data)

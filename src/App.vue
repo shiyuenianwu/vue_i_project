@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-02-25 17:37:06
- * @LastEditTime: 2020-03-17 19:38:38
+ * @LastEditTime: 2020-04-16 23:19:54
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \test_dev\vue_i_project\src\App.vue
@@ -11,6 +11,29 @@
     <router-view/>
   </div>
 </template>
+
+<script>
+import { GetLoginUserInfo } from "./request/user";
+
+export default {
+  name: "App",
+    created() {
+        GetLoginUserInfo().then(data=>{
+          console.log(data.data)
+          if (data.data.success) {
+            console.log("数据存在")
+          }else{
+            console.log("数据不存在")
+            this.$router.push('/login') // vue特有的跳转路由的方式
+          }
+        })
+      },
+  data() {
+    return{}
+  },
+  methods: {},
+};
+</script>
 
 <style>
 #app {

@@ -27,114 +27,96 @@
         />
       </el-form-item>
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <i class="el-icon-lock"></i>
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            placeholder="请输入密码"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
-        </el-form-item>
-      </el-tooltip>
+      <el-form-item prop="password">
+        <span class="svg-container">
+          <i class="el-icon-lock"></i>
+        </span>
+        <el-input
+          :key="passwordType"
+          ref="password"
+          v-model="loginForm.password"
+          :type="passwordType"
+          placeholder="请输入密码"
+          name="password"
+          tabindex="2"
+          autocomplete="on"
+        />
+      </el-form-item>
 
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width:30%;margin-bottom:30px;"
-        @click="handleLogin">
-        登录
-        </el-button>
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width:30%;margin-bottom:30px;"
-        @click="handleRegister">
-        注册
-        </el-button>
+      <el-button type="primary" style="width:30%;margin-bottom:30px;" @click="handleLogin">登录</el-button>
+      <el-button type="primary" style="width:30%;margin-bottom:30px;" @click="handleRegister">注册</el-button>
     </el-form>
   </div>
 </template>
 
 <script>
+import { Login, Register } from "../../request/user";
+
 export default {
   name: "Login",
   data() {
     return {
       loginForm: {
-        username: "admin",
-        password: "111111"
+        username: "",
+        password: ""
       },
       loginRules: {
         username: [{ required: true, trigger: "blur" }],
         password: [{ required: true, trigger: "blur" }]
       },
-      loading: false
+      // loading: false,
+      passwordType: "password"
     };
-  },
-  created() {
-    // window.addEventListener('storage', this.afterQRScan)
-  },
-  mounted() {
-    if (this.loginForm.username === "") {
-      this.$refs.username.focus();
-    } else if (this.loginForm.password === "") {
-      this.$refs.password.focus();
-    }
-  },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true;
-          this.$store
-            .dispatch("user/login", this.loginForm)
-            .then(() => {
-              this.$router.push({
-                path: this.redirect || "/",
-                query: this.otherQuery
-              });
-              this.loading = false;
+          // this.loading = true;
+          Login(this.loginForm.username, this.loginForm.password)
+            .then(data => {
+              if (data.data.success) {
+                this.$router.push('/')
+              } else {
+                alert(data.data.error.message)
+              }
             })
-            .catch(() => {
-              this.loading = false;
+            .catch(data => {
+              console.log(data);
+              alert(data);
             });
         } else {
-          console.log("error submit!!");
+          alert("登录失败");
           return false;
         }
       });
     },
     handleRegister() {
-      
-    },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== "redirect") {
-          acc[cur] = query[cur];
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          Register(this.loginForm.username, this.loginForm.password)
+            .then(data => {
+              if (data.data.success) {
+                this.$router.push('/')
+              } else {
+                alert(data.data.error.message)
+              }
+            })
+            .catch(data => {
+              console.log(data);
+              alert(data);
+            });
+        } else {
+          alert("注册失败");
+          return false;
         }
-        return acc;
-      }, {});
+      });
     }
   }
 };
 </script>
 
 <style lang="scss">
-
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;
